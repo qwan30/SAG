@@ -10,7 +10,7 @@
 
 ![SAG 对话工作台](docs/assets/sag-chat.png)
 
-## RAG 领域新 SOTA 与 Benchmark
+## RAG 领域新 SOTA
 
 论文复现代码：[Zleap-AI/SAG-Benchmark](https://github.com/Zleap-AI/SAG-Benchmark)
 
