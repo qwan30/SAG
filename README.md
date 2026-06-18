@@ -7,7 +7,11 @@
 
 **Language**: English | [简体中文](README-CN.md)
 
-> SAG: SQL-Retrieval Augmented Generation with Query-Time Dynamic Hyperedges
+
+> **SAG:** Graph retrieval technology capable of running on large-scale dynamic data.
+> 
+> **Paper:** [https://arxiv.org/abs/2606.15971](https://arxiv.org/abs/2606.15971)
+
 
 This project is an out-of-the-box document retrieval workbench built on SAG. After you upload Markdown or TXT documents, SAG automatically handles chunking, vectorization, event extraction, entity extraction, and relation organization. You can ask questions over project documents in a ChatGPT-like interface, inspect chunks, events, entities, embeddings, search traces, raw model logs, and explore the knowledge graph.
 
