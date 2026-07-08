@@ -93,6 +93,7 @@ export const defaultEntityTypes = [
 ] as const;
 
 export async function seed(): Promise<void> {
+  logger.info("Starting seed process...");
   for (const item of defaultEntityTypes) {
     await pool.query(
       `
@@ -124,9 +125,16 @@ export async function seed(): Promise<void> {
   logger.info({ count: defaultEntityTypes.length }, "seed complete");
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
+
+const isMain = resolve(fileURLToPath(import.meta.url)) === resolve(process.argv[1]);
+if (isMain) {
   seed()
-    .then(async () => closePool())
+    .then(async () => {
+      await closePool();
+      process.exit(0);
+    })
     .catch(async (error: unknown) => {
       logger.error({ error }, "seed failed");
       await closePool();
