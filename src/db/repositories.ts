@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import type pg from "pg";
 import { pool } from "./pool.js";
 import { toVectorLiteral } from "./vector.js";
+import { logger } from "../observability/logger.js";
 import type {
   ChunkRecord,
   DocumentRecord,
@@ -336,7 +337,7 @@ export async function getDefaultEntityType(type: string, client?: Queryable): Pr
 }
 
 export async function getAnyDefaultEntityType(client?: Queryable): Promise<string> {
-  const result = await db(client).query(
+  let result = await db(client).query(
     `
       select id
       from entity_types
@@ -346,7 +347,21 @@ export async function getAnyDefaultEntityType(client?: Queryable): Promise<strin
     `
   );
   if (!result.rows[0]?.id) {
-    throw new Error("entity_types seed data is missing; run npm run seed");
+    logger.warn("⚠ Entity types were missing – auto-seeded default data. To avoid this, run: npm run db:setup");
+    const { seed } = await import("./seed.js");
+    await seed();
+    result = await db(client).query(
+      `
+        select id
+        from entity_types
+        where is_active = true
+        order by case when type = 'subject' then 0 else 1 end, is_default desc
+        limit 1
+      `
+    );
+    if (!result.rows[0]?.id) {
+      throw new Error("Database setup incomplete: required entity types are missing. Run \"npm run db:setup\" in your terminal, then retry.");
+    }
   }
   return String(result.rows[0].id);
 }

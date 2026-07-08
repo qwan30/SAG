@@ -192,7 +192,11 @@ export async function startMcpServer(): Promise<void> {
   logger.info("SAG MCP stdio server started");
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
+
+const isMain = resolve(fileURLToPath(import.meta.url)) === resolve(process.argv[1]);
+if (isMain) {
   startMcpServer().catch((error: unknown) => {
     logger.error({ error }, "mcp server failed");
     process.exit(1);
