@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { pool, closePool } from "./pool.js";
 import { logger } from "../observability/logger.js";
+import { isMainModule } from "../utils/is-main.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "../..");
@@ -51,7 +52,7 @@ export async function migrate(): Promise<void> {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   migrate()
     .then(async () => closePool())
     .catch(async (error: unknown) => {

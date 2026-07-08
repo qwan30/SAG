@@ -1,5 +1,6 @@
 import { pool, closePool } from "./pool.js";
 import { logger } from "../observability/logger.js";
+import { isMainModule } from "../utils/is-main.js";
 
 export const defaultEntityTypes = [
   {
@@ -124,7 +125,7 @@ export async function seed(): Promise<void> {
   logger.info({ count: defaultEntityTypes.length }, "seed complete");
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   seed()
     .then(async () => closePool())
     .catch(async (error: unknown) => {
