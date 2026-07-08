@@ -2,6 +2,7 @@ services:
   postgres:
     image: pgvector/pgvector:pg16
     container_name: sag_lite_postgres
+    restart: unless-stopped
     environment:
       POSTGRES_DB: sag_lite
       POSTGRES_USER: sag_lite
@@ -15,6 +16,22 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sag_lite_app
+    restart: unless-stopped
+    ports:
+      - "4173:4173"
+    environment:
+      - DATABASE_URL=postgres://sag_lite:sag_lite_pass@postgres:5432/sag_lite
+      - HTTP_HOST=0.0.0.0
+      - HTTP_PORT=4173
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   sag_lite_pgdata:
